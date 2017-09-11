@@ -21,6 +21,7 @@ app.use(session({
     maxAge: 3600000,
   },
 }));
+
 app.use((req, res, next) => {
   var hour = 1000 * 60 * 60;
   if(!req.session.init) {
@@ -38,6 +39,8 @@ app.use((req, res, next) => {
 });
 
 database.initialize();
+
+app.use('/api', require('./routes/api'));
 
 app.get('*', (req, res) => {
   res.send('hello world');
