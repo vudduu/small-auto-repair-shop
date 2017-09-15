@@ -23,12 +23,10 @@ app.use(session({
 }));
 
 app.use((req, res, next) => {
-  var hour = 1000 * 60 * 60;
-  if(!req.session.init) {
+  const hour = 1000 * 60 * 60;
+  if (!req.session.init) {
     req.session.init = true;
-    req.session.auth = {
-      logged: false
-    };
+    req.session.auth = { logged: false };
   }
   req.session.cookie.expires = new Date(Date.now() + hour);
   req.session.cookie.maxAge = hour;
