@@ -1,0 +1,18 @@
+@import url(https://fonts.googleapis.com/css?family=Roboto+Condensed);
+
+$font1: 'Roboto Condensed', sans-serif;
+
+$sizeH1: 25px;
+
+$color1: #13293D; /* dark */
+$color2: #006494; /* medium */
+$color3: #E8F1F2; /* clear */
+$color4: #1B98E0; /* clear-medium */
+$color5: #247BA0; /* medium */
+
+$errColor: #ED6A5A; /* error color */
+$warnColor: #F4F1BB; /* warning color */
+$greenColor: #9BC1BC; /* green, good states */
+
+$white: #FFF;
+$black: #000;

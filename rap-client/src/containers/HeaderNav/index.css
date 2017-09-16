@@ -1,0 +1,144 @@
+@import "../../base.css";
+
+.responsive-nav {
+  .top-bar {
+    height: 10px;
+    background: $color2;
+    float: left;
+    width: 100%;
+  }
+
+  .profile {
+    float: right;
+    width: 90px;
+    margin-top: 20px;
+    margin-left: -90px;
+    a {
+      background: $color2;
+      color: $white;
+      cursor: pointer;
+      font-family: $font1;
+      padding: 3px;
+      margin-top: 5px;
+      display: inline-block;
+    }
+  }
+
+  .mobile-header {
+    visibility: hidden;
+    max-height: 0;
+    height: 40px;
+
+    color: $black;
+    line-height: 40px;
+    text-align: center;
+    font-size: 1.6em;
+    font-family: $font1;
+    .menu-btn {
+      cursor: pointer;
+      margin-right: 10px;
+      margin-left: -50px;
+      float: right;
+      background-color: transparent;
+      border: 0;
+      width: 40px;
+      height: 40px;
+      fill: $black;
+    }
+  }
+
+  .nav {
+    ul {
+      margin: 0;
+      width: 100%;
+      padding: 0;
+    }
+    li {
+      float: none;
+      width: 100%;
+      height: 40px;
+      a {
+        cursor: pointer;
+        line-height: 40px;
+        text-align: center;
+        text-decoration: none;
+        display: block;
+        width: 100%;
+        height: 100%;
+        color: $black;
+        font-size: 1.6em;
+        font-family: $font1;
+      }
+      &.active {
+        a {
+          background: $color2;
+          color: $white;
+        }
+      }
+    }
+  }
+
+  @media screen and (min-width: 700px) {
+    .nav {
+      text-align: center;
+      ul {
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+      }
+      li {
+        float: none;
+        display: inline-flex;
+        width: auto;
+        margin-left: 15px;
+        margin-right: 15px;
+        a {
+          padding: 5px 10px 10px;
+        }
+      }
+    }
+  }
+
+  @media screen and (max-width: 700px) {
+    .mobile-header {
+      visibility: visible;
+      max-height: 40px;
+    }
+
+    .nav {
+      .profile {
+        background: $color2;
+        float: none;
+        width: 100%;
+        margin: 0;
+        height: 40px;
+        border-bottom: 1px $white solid;
+        border-top: 1px $white solid;
+        a {
+          float: left;
+          margin: 8px;
+          background: $white;
+          color: $color2;
+        }
+        a + a {
+          float: right;
+        }
+      }
+      li {
+        border-bottom: $white 1px solid;
+        a {
+          background: $color2;
+          color: $white;
+        }
+      }
+      &.show-menu {
+        max-height: 290px;
+      }
+      overflow: hidden;
+      width: 100%;
+      height: auto;
+      max-height: 0;
+      transition: 0.8s ease-in-out;
+    }
+  }
+}

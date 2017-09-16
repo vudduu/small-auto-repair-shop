@@ -1,5 +1,67 @@
+@import "base.css";
+
 body {
   margin: 0;
   padding: 0;
   font-family: sans-serif;
+  background: $color3;
 }
+
+.peb-center-ctn {
+  margin: 30px auto;
+  max-width: 800px;
+}
+
+@media screen and (max-width: 700px) {
+  .peb-center-ctn {
+    padding-right: 10px;
+    padding-left: 10px;
+  }
+}
+
+.peb-input {
+  width: 400px;
+  padding: 6px 12px;
+  font-size: 14px;
+  line-height: 1.42857143;
+  color: $color1;
+  background-color: $white;
+  background-image: none;
+  border: 1px solid $color2;
+  border-radius: 4px;
+  font-family: $font1;
+  cursor: pointer;
+}
+.peb-input:hover {
+  background-color: $color4;
+}
+.peb-input-txt {
+  width: 374px;
+}
+.peb-input-txt:hover {
+  background-color: $white;
+}
+.peb-input-small {
+  width: 74px;
+}
+.peb-clear {
+  clear: both;
+}
+div.peb-error-label {
+  font-family: $font1;
+  background: $errColor;
+  color: $black;
+  border-radius: 4px;
+  padding: 10px;
+  margin-bottom: 10px;
+  margin-top: 0;
+}
+@media screen and (max-width: 700px) {
+  .peb-input-txt {
+    width: 90%;
+  }
+  .peb-input{
+    width: 90%;
+  }
+}
+

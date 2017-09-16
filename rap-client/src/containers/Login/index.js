@@ -5,6 +5,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import SHA256 from 'crypto-js/sha256';
 
+import './index.css';
+
 import { loginAccount } from '../../actions/account';
 
 class Login extends Component {
@@ -92,7 +94,10 @@ class Login extends Component {
         </div>
         {this.getPasswordError()}
         <div className="row">
-          <button onClick={this.onLogin}>
+          <button
+            className="peb-input"
+            onClick={this.onLogin}
+          >
             Login
           </button>
         </div>
@@ -102,7 +107,7 @@ class Login extends Component {
 }
 
 export default connect(
-  () => {},
+  () => ({}),
   dispatch => bindActionCreators({
     loginAccount,
   }, dispatch),

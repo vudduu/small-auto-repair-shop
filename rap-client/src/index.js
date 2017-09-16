@@ -13,7 +13,7 @@ import './index.css';
 import App from './containers/App';
 import Login from './containers/Login';
 import CreateAccount from './containers/CreateAccount';
-import NavLinks from './containers/NavLinks';
+import HeaderNav from './containers/HeaderNav';
 import registerServiceWorker from './registerServiceWorker';
 import configureStore from './store/configureStore';
 
@@ -23,7 +23,7 @@ ReactDOM.render(
   <Provider store={store}>
     <Router>
       <div>
-        <NavLinks />
+        <HeaderNav />
         <Switch>
           <Route exact path="/home" component={App} />
           <Route exact path="/register" component={CreateAccount} />

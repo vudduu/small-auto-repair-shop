@@ -4,6 +4,8 @@ import classNames from 'classnames';
 // import { connect } from 'react-redux';
 // import { bindActionCreators } from 'redux';
 
+import './dropdown.css';
+
 class Dropdown extends Component {
   static propTypes = {
     id: PropTypes.string.isRequired,

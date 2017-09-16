@@ -3,15 +3,21 @@ import PropTypes from 'prop-types';
 import ReactModal from 'react-modal';
 // import classNames from 'classnames';
 
+import './errorPanel.css';
+
 class ErrorPanel extends Component {
   static propTypes = {
     clickOk: PropTypes.func,
+    onClose: PropTypes.func,
     textOk: PropTypes.string,
     children: PropTypes.any,
+    show: PropTypes.bool,
   };
 
   static defaultProps = {
+    show: false,
     clickOk: () => {},
+    onClose: () => {},
     textOk: '',
     children: {},
   };
@@ -19,23 +25,26 @@ class ErrorPanel extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      show: false,
+      show: props.show,
     };
     this.handleCloseModal = this.handleCloseModal.bind(this);
     this.clickOk = this.clickOk.bind(this);
   }
 
-  show() {
-    this.setState({ show: true });
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.show && nextProps.show !== this.props.show) {
+      this.setState({ show: true });
+    }
   }
 
   clickOk() {
     if (this.props.clickOk) this.props.clickOk();
-    this.setState({ show: false });
+    this.handleCloseModal();
   }
 
   handleCloseModal() {
     this.setState({ show: false });
+    this.props.onClose();
   }
 
   render() {
@@ -43,14 +52,17 @@ class ErrorPanel extends Component {
     return (
       <ReactModal
         isOpen={this.state.show}
-        className="modal"
+        className="modal-div"
         onRequestClose={this.handleCloseModal}
+        contentLabel="ErrorPanel"
       >
-        {this.props.children}
-        <div className="peb-buttons">
-          <button onClick={this.clickOk} className="ok" >
-            {this.props.textOk ? this.props.textOk : 'OK'}
-          </button>
+        <div className="peb-error-panel">
+          {this.props.children}
+          <div className="peb-buttons">
+            <button onClick={this.clickOk} className="ok" >
+              {this.props.textOk ? this.props.textOk : 'OK'}
+            </button>
+          </div>
         </div>
       </ReactModal>
     );

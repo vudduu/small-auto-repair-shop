@@ -26,8 +26,19 @@ export function loginAccount(username, password) {
         }
         return res;
       })
-      .catch((err) => {
-        throw err;
+  );
+}
+
+export function registerAccount(username, password, name, email, role) {
+  return dispatch => (
+    client.registerAccount(username, password, name, email, role)
+      .then((res) => {
+        dispatch({
+          type: CREATE_ACCOUNT,
+          ...res,
+        });
+        return res;
       })
   );
 }
+

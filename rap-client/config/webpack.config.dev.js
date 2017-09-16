@@ -12,6 +12,17 @@ const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
 const getClientEnvironment = require('./env');
 const paths = require('./paths');
 
+const postcssImport = require('postcss-import');
+const postcssMixins = require('postcss-mixins');
+const postcssNested = require('postcss-nested');
+const postcssCssnext = require('postcss-cssnext');
+
+const postcssSimpleExtend = require('postcss-simple-extend');
+const postcssSimpleVars = require('postcss-simple-vars');
+const postcssCalc = require('postcss-calc');
+const postcssColorFunction = require('postcss-color-function');
+const customProperties = require('postcss-custom-properties');
+
 // Webpack uses `publicPath` to determine where the app is being served from.
 // In development, we always serve from the root. This makes config easier.
 const publicPath = '/';
@@ -175,6 +186,17 @@ module.exports = {
                   // https://github.com/facebookincubator/create-react-app/issues/2677
                   ident: 'postcss',
                   plugins: () => [
+                    postcssImport({
+                      addDependencyTo: webpack,
+                    }),
+                    postcssMixins,
+                    // postcssSimpleExtend,
+                    postcssSimpleVars,
+                    postcssCalc(),
+                    // postcssColorFunction(),
+                    customProperties(),
+                    // postcssCssnext,
+                    // require('postcss-flexbugs-fixes'),
                     require('postcss-flexbugs-fixes'),
                     autoprefixer({
                       browsers: [
@@ -185,6 +207,7 @@ module.exports = {
                       ],
                       flexbox: 'no-2009',
                     }),
+                    postcssNested,
                   ],
                 },
               },
