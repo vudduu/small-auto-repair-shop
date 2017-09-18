@@ -1,6 +1,9 @@
+/* eslint no-underscore-dangle: [2, { "allow": ["_id"] }] */
+
 import {
   CREATE_ACCOUNT,
   LOGIN_ACCOUNT,
+  LOGOUT_ACCOUNT,
 } from '../constants';
 
 export const VISITOR = 1;
@@ -15,14 +18,20 @@ const defaultAccountState = {
 };
 
 const handleLoginAccount = (state, action) => {
-  const { username, role } = action;
+  const { data } = action;
   return {
     ...state,
-    username,
-    role,
     logged: true,
+    enabled: data.enabled || 0,
+    id: data._id || state.id,
+    username: data.username || state.username,
+    name: data.name || state.name,
+    email: data.email || state.email,
+    role: data.role || state.role,
   };
 };
+
+const handleLogoutAccount = () => defaultAccountState;
 
 export default function (state = defaultAccountState, action = {}) {
   switch (action.type) {
@@ -30,6 +39,8 @@ export default function (state = defaultAccountState, action = {}) {
       return state;
     case LOGIN_ACCOUNT:
       return handleLoginAccount(state, action);
+    case LOGOUT_ACCOUNT:
+      return handleLogoutAccount();
     default:
       return state;
   }

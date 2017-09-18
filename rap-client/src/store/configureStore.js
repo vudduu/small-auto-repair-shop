@@ -4,9 +4,12 @@ import { createLogger } from 'redux-logger';
 
 import rootReducer from '../reducers';
 
+import accountMiddleware from '../middleware/account';
+
 const logger = createLogger({ collapsed: true });
 
 const createStoreWithMiddleware = applyMiddleware(
+  accountMiddleware,
   thunkMiddleware,
   logger,
 )(createStore);

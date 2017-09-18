@@ -5,12 +5,12 @@ import { bindActionCreators } from 'redux';
 
 import './App.css';
 import {
-  loadAccountData,
+  getAuth,
 } from '../actions/account';
 
 function App(props) {
   const onClick = () => {
-    props.loadAccountData();
+    props.getAuth();
   };
   return (
     <div className="App">
@@ -21,7 +21,7 @@ function App(props) {
 }
 
 App.propTypes = {
-  loadAccountData: PropTypes.func.isRequired,
+  getAuth: PropTypes.func.isRequired,
 };
 
 export default connect(
@@ -29,7 +29,7 @@ export default connect(
     account,
   }),
   dispatch => bindActionCreators({
-    loadAccountData,
+    getAuth,
   }, dispatch),
 )(App);
 

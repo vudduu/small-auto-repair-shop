@@ -16,8 +16,10 @@ import CreateAccount from './containers/CreateAccount';
 import HeaderNav from './containers/HeaderNav';
 import registerServiceWorker from './registerServiceWorker';
 import configureStore from './store/configureStore';
+import { getAuth } from './actions/account';
 
 const store = configureStore();
+getAuth()(store.dispatch);
 
 ReactDOM.render(
   <Provider store={store}>

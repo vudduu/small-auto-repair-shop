@@ -1,18 +1,10 @@
 import {
   CREATE_ACCOUNT,
   LOGIN_ACCOUNT,
+  LOGOUT_ACCOUNT,
 } from '../constants';
 
 import { client } from '../api';
-
-export function loadAccountData() {
-  return (dispatch) => {
-    dispatch({
-      type: CREATE_ACCOUNT,
-      test: 't',
-    });
-  };
-}
 
 export function loginAccount(username, password) {
   return dispatch => (
@@ -21,11 +13,37 @@ export function loginAccount(username, password) {
         if (res.username && res.password) {
           dispatch({
             type: LOGIN_ACCOUNT,
-            username,
+            ...res,
           });
         }
         return res;
       })
+  );
+}
+
+export function logoutAccount() {
+  return dispatch => (
+    client.logout().then((res) => {
+      dispatch({
+        type: LOGOUT_ACCOUNT,
+        ...res,
+      });
+    })
+  );
+}
+
+export function getAuth() {
+  return dispatch => (
+    client.getAuth().then((res) => {
+      if (res.success) {
+        dispatch({
+          type: LOGIN_ACCOUNT,
+          ...res,
+        });
+      } else {
+        dispatch({ type: LOGOUT_ACCOUNT });
+      }
+    })
   );
 }
 

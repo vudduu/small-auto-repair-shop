@@ -1,28 +1,21 @@
-import request from 'request';
-
 export const baseURI = 'http://127.0.0.1:3001';
 
-const optionsPostDefault = {
-  method: 'GET',
-  headers: {
-    Accept: '*/*',
-  },
-  body: {},
-  json: true,
-  timeout: 5000,
+const defaultHeaders = new window.Headers({
+  Accept: 'application/json, text/plain, */*',
+  'Content-Type': 'application/json',
+});
+
+const optionsDefault = {
+  method: 'get',
+  headers: defaultHeaders,
+  mode: 'cors',
+  cache: 'default',
+  credentials: 'include',
 };
 
-const requestPromised = options => new Promise((resolve, reject) => {
-  request(options, (error, response, body) => {
-    if (error) {
-      reject(error);
-    } else if (response.statusCode === 200) {
-      resolve(body);
-    } else {
-      reject(response);
-    }
-  });
-});
+const requestPromised = (url, options) => (
+  window.fetch(url, options).then(o => o.json())
+);
 
 class ClientAPI {
   constructor() {
@@ -31,25 +24,40 @@ class ClientAPI {
 
   login(username, password) {
     const options = {
-      ...optionsPostDefault,
-      url: `${baseURI}/api/login`,
-      method: 'POST',
-      body: { username, password },
+      ...optionsDefault,
+      method: 'post',
+      body: JSON.stringify({ username, password }),
     };
-    return requestPromised(options).then((res) => {
+    return requestPromised(`${baseURI}/api/login`, options).then((res) => {
       this.username = username;
       return res;
     });
   }
 
+  logout() {
+    const options = {
+      ...optionsDefault,
+    };
+    return requestPromised(`${baseURI}/api/logout`, options).then((res) => {
+      this.username = null;
+      return res;
+    });
+  }
+
+  getAuth() {
+    const options = {
+      ...optionsDefault,
+    };
+    return requestPromised(`${baseURI}/api/account/get-auth`, options);
+  }
+
   registerAccount(username, password, name, email, role) {
     const options = {
-      ...optionsPostDefault,
-      url: `${baseURI}/api/account/create`,
-      method: 'POST',
-      body: { username, password, name, email, role },
+      ...optionsDefault,
+      method: 'post',
+      body: JSON.stringify({ username, password, name, email, role }),
     };
-    return requestPromised(options);
+    return requestPromised(`${baseURI}/api/account/create`, options);
   }
 }
 

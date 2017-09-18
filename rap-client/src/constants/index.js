@@ -1,2 +1,3 @@
 export const CREATE_ACCOUNT = 'CREATE_ACCOUNT';
 export const LOGIN_ACCOUNT = 'LOGIN_ACCOUNT';
+export const LOGOUT_ACCOUNT = 'LOGOUT_ACCOUNT';

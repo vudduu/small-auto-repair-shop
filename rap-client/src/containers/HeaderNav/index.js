@@ -7,12 +7,18 @@ import {
   NavLink,
   withRouter,
 } from 'react-router-dom';
+
 import './index.css';
+import { logoutAccount } from '../../actions/account';
+
+let tabIndex = 0;
 
 class HeaderNav extends Component {
   static propTypes = {
     account: PropTypes.object.isRequired,
     location: PropTypes.object.isRequired,
+    history: PropTypes.object.isRequired,
+    logoutAccount: PropTypes.func.isRequired,
   };
 
   constructor(props) {
@@ -20,10 +26,17 @@ class HeaderNav extends Component {
     this.state = {
       showMenu: true,
     };
+    this.doLogout = this.doLogout.bind(this);
+    this.createLink = this.createLink.bind(this);
   }
 
   menuOpen() {
     console.log('test');
+  }
+
+  doLogout() {
+    this.props.logoutAccount();
+    this.props.history.push('/home');
   }
 
   getDefaultNavLinks() {
@@ -43,7 +56,47 @@ class HeaderNav extends Component {
     return [{
       to: '/home',
       text: 'Home',
-    }];
+      show: true,
+    }, {
+      to: '/register',
+      text: 'Create Account',
+      show: this.props.account && this.props.account.role > 2,
+    }, {
+      text: 'Logout',
+      onClick: this.doLogout,
+      show: true,
+    }].filter(o => o.show);
+  }
+
+  createLink(link) {
+    if (link.onClick) {
+      tabIndex += 1;
+      return (
+        <li key={link.text} >
+          <a
+            onClick={link.onClick}
+            role="button"
+            tabIndex={tabIndex}
+          >
+            {link.text}
+          </a>
+        </li>
+      );
+    }
+    const active = this.props.location.pathname === link.to;
+    return (
+      <li
+        key={link.to}
+        className={classNames({ active })}
+      >
+        <NavLink
+          to={link.to}
+          replace={active}
+        >
+          {link.text}
+        </NavLink>
+      </li>
+    );
   }
 
   render() {
@@ -57,20 +110,9 @@ class HeaderNav extends Component {
             'show-menu': this.state.showMenu,
           })}
         >
-          {
-            <ul>
-              {navLinks.map(link => (
-                <li
-                  key={link.to}
-                  className={classNames({
-                    active: this.props.location.pathname === link.to,
-                  })}
-                >
-                  <NavLink to={link.to}>{link.text}</NavLink>
-                </li>
-              ))}
-            </ul>
-          }
+          <ul>
+            {navLinks.map(link => this.createLink(link))}
+          </ul>
         </nav>
         <div className="mobile-header">
           Auto Repair Shop
@@ -95,5 +137,6 @@ export default withRouter(connect(
     account,
   }),
   dispatch => bindActionCreators({
+    logoutAccount,
   }, dispatch),
 )(HeaderNav));
