@@ -59,6 +59,30 @@ class ClientAPI {
     };
     return requestPromised(`${baseURI}/api/account/create`, options);
   }
+
+  updateAccount(accountId, data) {
+    const options = {
+      ...optionsDefault,
+      method: 'put',
+      body: JSON.stringify(data),
+    };
+    return requestPromised(`${baseURI}/api/account/update/${accountId}`, options);
+  }
+
+  deleteAccount(accountId) {
+    const options = {
+      ...optionsDefault,
+      method: 'delete',
+    };
+    return requestPromised(`${baseURI}/api/account/delete/${accountId}`, options);
+  }
+
+  getAccountsList(page) {
+    const options = {
+      ...optionsDefault,
+    };
+    return requestPromised(`${baseURI}/api/account/get-all?page=${page}`, options);
+  }
 }
 
 export const client = new ClientAPI();
