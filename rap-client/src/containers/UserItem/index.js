@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
+import './index.css';
+
 import LocalizedStrings from '../../localizations/LocalizedStrings';
 
 class UserItem extends Component {
@@ -8,7 +10,7 @@ class UserItem extends Component {
     onOpenRepairsClick: PropTypes.func.isRequired,
     onUpdateClick: PropTypes.func.isRequired,
     onDeleteClick: PropTypes.func.isRequired,
-    data: PropTypes.func.isRequired,
+    data: PropTypes.object.isRequired,
   };
 
   constructor(props) {
@@ -25,14 +27,14 @@ class UserItem extends Component {
     }
   }
 
-  updateButtonClick() {
+  onUpdateClick() {
     const userM = this.props.data;
     if (this.props.onUpdateClick) {
       this.props.onUpdateClick(userM);
     }
   }
 
-  deleteButtonClick() {
+  onDeleteClick() {
     const userM = this.props.data;
     if (this.props.onDeleteClick) {
       this.props.onDeleteClick(userM);
@@ -51,10 +53,10 @@ class UserItem extends Component {
         <button onClick={this.openRepairsClick} >
           Open Repairs List
         </button>
-        <button onClick={this.updateButtonClick} >
+        <button onClick={this.onUpdateClick} >
           Update
         </button>
-        <button onClick={this.deleteButtonClick} >
+        <button onClick={this.onDeleteClick} >
           Delete
         </button>
       </div>

@@ -11,6 +11,7 @@ class ConfirmationPanel extends Component {
     textYes: PropTypes.string,
     textNo: PropTypes.string,
     children: PropTypes.any,
+    open: PropTypes.bool,
   };
 
   static defaultProps = {
@@ -18,6 +19,7 @@ class ConfirmationPanel extends Component {
     textYes: '',
     textNo: '',
     children: {},
+    open: false,
   };
 
   constructor(props) {
@@ -37,8 +39,15 @@ class ConfirmationPanel extends Component {
   render() {
     return (
       <ReactModal
+        isOpen={this.props.open}
         className="peb-confirmation-panel"
-        clickOutside={this.clickOnNo}
+        onRequestClose={this.clickOnNo}
+        contentLabel="ConfirmationPanel"
+        style={{
+          overlay: {
+            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+          },
+        }}
       >
         {this.props.children}
         <div className="peb-buttons">

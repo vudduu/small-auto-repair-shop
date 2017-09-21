@@ -15,14 +15,14 @@ import { deleteAccount, getAccountsList } from '../../actions/account';
 import ConfirmationPanel from '../../components/confirmationPanel';
 import UserItem from '../UserItem';
 
-// import { VISITOR, REGULAR } from '../../reducers/account';
+import { MANAGER } from '../../reducers/account';
 
 const Loader = halogen.RingLoader;
 
 class UsersList extends Component {
   static propTypes = {
     // history: PropTypes.object.isRequired,
-    // account: PropTypes.object.isRequired,
+    account: PropTypes.object.isRequired,
     accountsList: PropTypes.array.isRequired,
     accountsListLoading: PropTypes.bool.isRequired,
     deleteAccount: PropTypes.func.isRequired,
@@ -32,15 +32,28 @@ class UsersList extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      usersList: props.accountsList || [],
-      usersListLoading: props.accountsListLoading,
       complete: false,
       query: '',
       deleteConfirmationShow: false,
       lastUserId: '',
     };
-    this.props.getAccountsList();
+
     this.goRepairsList = this.goRepairsList.bind(this);
+    this.onClickMoreAccountsLoad = this.onClickMoreAccountsLoad.bind(this);
+    this.confirmDeleteUser = this.confirmDeleteUser.bind(this);
+    this.clickDeleteOnConfirmation = this.clickDeleteOnConfirmation.bind(this);
+
+    if (props.account.logged && props.account.role >= MANAGER) {
+      this.props.getAccountsList();
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.account.logged !== this.props.account.logged) {
+      if (this.props.account.role >= MANAGER) {
+        this.props.getAccountsList();
+      }
+    }
   }
 
   goRepairsList(userM) {
@@ -67,6 +80,7 @@ class UsersList extends Component {
       }
     }
     this.setState({
+      lastUserId: '',
       deleteConfirmationShow: false,
     });
   }
@@ -94,7 +108,7 @@ class UsersList extends Component {
             transitionEnterTimeout={1000}
             transitionLeaveTimeout={1000}
           >
-            {this.state.usersList.map(userM => (
+            {this.props.accountsList.map(userM => (
               <UserItem
                 data={userM}
                 key={userM._id}
@@ -105,28 +119,28 @@ class UsersList extends Component {
             ))}
           </ReactCSSTransitionGroup>
         </div>
-        { this.state.usersListLoading ?
+        { this.props.accountsListLoading ?
           <div className="hv-loading"><Loader color="#006494" /></div>
           : null }
         <button onClick={this.onClickMoreAccountsLoad} >
           Load More Users
         </button>
-        { this.state.deleteConfirmationShow ?
-          <ConfirmationPanel
-            clickOnOption={this.clickDeleteOnConfirmation}
-          >
-            Are you sure ?
-          </ConfirmationPanel> : null}
+        <ConfirmationPanel
+          open={this.state.deleteConfirmationShow}
+          clickOnOption={this.clickDeleteOnConfirmation}
+        >
+          Are you sure ?
+        </ConfirmationPanel>
       </div>
     );
   }
 }
 
 export default connect(
-  ({ account }) => ({
+  ({ account, accounts }) => ({
     account,
-    accountsList: [],
-    accountsListLoading: false,
+    accountsList: accounts.accountsList,
+    accountsListLoading: accounts.accountsListLoading,
   }),
   dispatch => bindActionCreators({
     deleteAccount,

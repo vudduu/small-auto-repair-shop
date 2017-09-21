@@ -1,0 +1,23 @@
+@import "../base.css";
+
+.peb-confirmation-panel {
+  width: 60%;
+  max-width: 550px;
+  background: #fff;
+  position: relative;
+  margin: 10% auto;
+  padding: 15px;
+  button {
+    width: 150px;
+    margin: 0 auto;
+    .yes{
+      margin-right: 10px;
+    }
+  }
+}
+
+@media screen and (max-width: 700px) {
+  .peb-confirmation-panel {
+    width: 95%;
+  }
+}
