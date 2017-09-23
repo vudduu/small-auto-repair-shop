@@ -13,7 +13,7 @@ module.exports = {
     const accountM = new AccountModel(data);
     accountM.save((err, accountR) => {
       if (err) return next(err);
-      var accountObj = accountR.toObject();
+      const accountObj = accountR.toObject();
       delete accountObj.password;
       res.json({
         success: true,
@@ -97,11 +97,21 @@ module.exports = {
             req.session.auth.username = req.body.username;
             req.session.auth.id = accountObj._id;
             req.session.auth.role = accountObj.role;
-            delete accountObj.password;
-            resp.data = accountObj;
+            req.session.save((err) => {
+              if (err) {
+                res.json(resp);
+                return next(err);
+              }
+              delete accountObj.password;
+              resp.data = accountObj;
+              res.json(resp);
+            });
+          } else {
+            res.json(resp);
           }
+        } else {
+          res.json(resp);
         }
-        res.json(resp);
       });
   },
 
@@ -115,27 +125,23 @@ module.exports = {
   getAuth(req, res, next) {
     if (req.session.auth && req.session.auth.username) {
       AccountModel.findOne({
-        username: req.session.auth.username
+        username: req.session.auth.username,
       })
-        .exec(function (err, account) {
+        .exec((err, account) => {
           if (err) return next(err);
           if (account) {
-            var accountObj = account.toObject();
+            const accountObj = account.toObject();
             delete accountObj.password;
             res.json({
               success: true,
               data: accountObj,
             });
           } else {
-            res.json({
-              success: false,
-            });
+            res.json({ success: false });
           }
         });
     } else {
-      res.json({
-        success: false,
-      });
+      res.json({ success: false });
     }
   },
 
@@ -168,7 +174,7 @@ module.exports = {
       .exec((err, accounts) => {
         if (err) return next(err);
         res.json({
-          access: true,
+          success: true,
           accounts: accounts,
         });
       });

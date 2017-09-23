@@ -13,12 +13,12 @@ const accountSchema = Schema({
   /**
    * TODO: add static: Account.roles.user
    * {
-     *      1: visitor,
-     *      2: regular,
-     *      3: manager,
-     *      4: admin,
-     *      5: super user
-     * }
+   *      1: visitor,
+   *      2: regular,
+   *      3: manager,
+   *      4: admin,
+   *      5: super user
+   * }
    */
   role: { type: Number, default: 2 },
   enabled: { type: Number, default: 1 }
