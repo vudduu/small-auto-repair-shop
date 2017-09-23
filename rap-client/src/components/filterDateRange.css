@@ -1,0 +1,39 @@
+@import "../base.css";
+
+.peb-filter-date-range {
+  margin: 10px;
+  .left {
+    float: left;
+  }
+  .right {
+    float: left;
+  }
+  .left, .right {
+    padding: 5px;
+    label {
+      font-family: $font1;
+      margin-right: 10px;
+      min-width: 100px;
+      width: 30%;
+    }
+    .peb-input-date {
+      min-width: 200px;
+      width: 70%;
+    }
+  }
+}
+
+@media screen and (max-width: 700px) {
+  .peb-filter-date-range {
+    .left, .right {
+      width: 95%;
+      margin: 0 auto;
+    }
+  }
+}
+
+.peb-modal-day-selector {
+  width: 280px;
+  margin: 100px auto;
+  background: #fff;
+}
