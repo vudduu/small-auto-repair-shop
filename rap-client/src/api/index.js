@@ -83,6 +83,68 @@ class ClientAPI {
     };
     return requestPromised(`${baseURI}/api/account/get-all?page=${page}`, options);
   }
+
+  getAllAccountsIdsNames() {
+    const options = {
+      ...optionsDefault,
+    };
+    return requestPromised(`${baseURI}/api/account/get-all-ids`, options);
+  }
+
+  repairCreate(userId, date, hours) {
+    const options = {
+      ...optionsDefault,
+      method: 'post',
+      body: JSON.stringify({ userId, date, hours }),
+    };
+    return requestPromised(`${baseURI}/api/repair/create`, options);
+  }
+
+  repairUpdate(repairId, userId, date, hours, complete) {
+    const options = {
+      ...optionsDefault,
+      method: 'put',
+      body: JSON.stringify({ userId, date, hours, complete }),
+    };
+    return requestPromised(`${baseURI}/api/repair/update/${repairId}`, options);
+  }
+
+  repairDelete(repairId) {
+    const options = {
+      ...optionsDefault,
+      method: 'delete',
+    };
+    return requestPromised(`${baseURI}/api/repair/delete/${repairId}`, options);
+  }
+
+  getRepairsFromUser(userId) {
+    const options = {
+      ...optionsDefault,
+    };
+    return requestPromised(
+      `${baseURI}/api/repair/get-all-user?userId=${userId}`,
+      options,
+    );
+  }
+
+  getRepairsFromUserByDate(userId, from, to) {
+    const options = {
+      ...optionsDefault,
+    };
+    return requestPromised(
+      `${baseURI}/api/repair/get-all-user-date?userId=${userId}&from=${from}&to=${to}`,
+      options,
+    );
+  }
+
+  addCommentRepair(repairId, comment) {
+    const options = {
+      ...optionsDefault,
+      method: 'post',
+      body: JSON.stringify({ comment }),
+    };
+    return requestPromised(`${baseURI}/api/repair/${repairId}/comment`, options);
+  }
 }
 
 export const client = new ClientAPI();

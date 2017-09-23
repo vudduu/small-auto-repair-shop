@@ -58,6 +58,10 @@ class HeaderNav extends Component {
       text: 'Home',
       show: true,
     }, {
+      to: '/create-repair',
+      text: 'New Repair',
+      show: this.props.account && this.props.account.role > 2,
+    }, {
       to: '/users-list',
       text: 'Users',
       show: this.props.account && this.props.account.role > 2,

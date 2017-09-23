@@ -13,6 +13,7 @@ import './index.css';
 import App from './containers/App';
 import Login from './containers/Login';
 import CreateAccount from './containers/CreateAccount';
+import CreateRepair from './containers/CreateRepair';
 import HeaderNav from './containers/HeaderNav';
 import UsersList from './containers/UsersList';
 import UpdateUser from './containers/UpdateUser';
@@ -31,6 +32,7 @@ ReactDOM.render(
         <Switch>
           <Route exact path="/home" component={App} />
           <Route exact path="/register" component={CreateAccount} />
+          <Route exact path="/create-repair" component={CreateRepair} />
           <Route exact path="/users-list" component={UsersList} />
           <Route exact path="/user/update/:accountId" component={UpdateUser} />
           <Route exact path="/login" component={Login} />

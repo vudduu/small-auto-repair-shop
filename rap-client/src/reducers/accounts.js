@@ -5,11 +5,13 @@ import {
   DELETE_ACCOUNT,
   LOAD_ACCOUNTS_LIST,
   ACCOUNTS_LIST_LOADING,
+  LOAD_ACCOUNTS_IDS,
 } from '../constants';
 
 const defaultAccountsState = {
   accountsListLoading: false,
   accountsList: [],
+  accountsIds: [],
 };
 
 function setAccountsListLoading(state, action) {
@@ -22,6 +24,10 @@ function existsOnList(list, item) {
   return list.reduce((flag, aux) => (
     flag || item._id === aux._id
   ), false);
+}
+
+function loadAccountsIds(state, action) {
+  return { ...state, accountsIds: action.accounts };
 }
 
 function loadAccountsList(state, action) {
@@ -61,6 +67,8 @@ function handleUpdateAccount(state, action) {
 
 export default function (state = defaultAccountsState, action = {}) {
   switch (action.type) {
+    case LOAD_ACCOUNTS_IDS:
+      return loadAccountsIds(state, action);
     case LOAD_ACCOUNTS_LIST:
       return loadAccountsList(state, action);
     case ACCOUNTS_LIST_LOADING:

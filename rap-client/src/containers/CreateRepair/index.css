@@ -1,0 +1,46 @@
+@import "../../base.css";
+
+.peb-create-repair {
+  .div-group {
+    margin-bottom: 30px;
+    label {
+      font-family: $font1;
+      margin-right: 10px;
+    }
+    .peb-input-small {
+      margin-right: 10px;
+    }
+  }
+  .create-button {
+  }
+}
+
+.peb-repair-panel {
+  width: 280px;
+  margin: 100px auto;
+  background: #fff;
+}
+
+.peb-create-repair {
+  label {
+    font-family: $font1;
+    width: 200px;
+    text-align: right;
+    display: inline-flex;
+  }
+  .row {
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  .form-control {
+    width: 400px;
+  }
+}
+
+@media screen and (max-width: 700px) {
+  .peb-create-repair {
+    .form-control {
+      width: 90%;
+    }
+  }
+}
