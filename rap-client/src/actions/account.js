@@ -66,28 +66,18 @@ export function registerAccount(username, password, name, email, role) {
   );
 }
 
-export function updateAccount(data) {
+export function updateAccount(accountId, data) {
   return dispatch => (
-    client.updateAccount(data._id, data)
+    client.updateAccount(accountId, data)
       .then((res) => {
         dispatch({
           type: UPDATE_ACCOUNT,
-          ...res,
+          accountId,
+          data,
         });
         return res;
       })
   );
-  // request
-  //   .put(config.apiUri + '/api/account/update/' + data._id)
-  //   .send(data)
-  //   .end(function (err, res) {
-  //     if (err) {
-  //       console.error("ERROR", err.message);
-  //     } else {
-  //       var data = JSON.parse(res.text);
-  //       console.log(data);
-  //     }
-  //   });
 }
 
 export function deleteAccount(accountId) {
@@ -101,17 +91,6 @@ export function deleteAccount(accountId) {
         return res;
       })
   );
-  // request
-  //   .delete(config.apiUri + '/api/account/delete/' + accountId)
-  //   .end(function (err, res) {
-  //     if (err) {
-  //       console.error("ERROR", err.message);
-  //     } else {
-  //       var data = JSON.parse(res.text);
-  //       data.type = ActionTypes.DELETE_ACCOUNT;
-  //       PEBDispatcher.dispatch(data);
-  //     }
-  //   });
 }
 
 export function getAccountsList(page = 0) {
@@ -130,18 +109,4 @@ export function getAccountsList(page = 0) {
         return res;
       });
   };
-  // PEBDispatcher.dispatch({
-  //   type: ActionTypes.ACCOUNTS_LIST_LOADING
-  // });
-  // request
-  //   .get(config.apiUri + '/api/account/get-all?page=' + options.page)
-  //   .end(function (err, res) {
-  //     if (err) {
-  //       console.error("ERROR", err.message);
-  //     } else {
-  //       var resp = JSON.parse(res.text);
-  //       resp.type = ActionTypes.LOAD_ACCOUNTS_LIST;
-  //       PEBDispatcher.dispatch(resp);
-  //     }
-  //   });
 }

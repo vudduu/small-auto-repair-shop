@@ -15,6 +15,7 @@ import Login from './containers/Login';
 import CreateAccount from './containers/CreateAccount';
 import HeaderNav from './containers/HeaderNav';
 import UsersList from './containers/UsersList';
+import UpdateUser from './containers/UpdateUser';
 import registerServiceWorker from './registerServiceWorker';
 import configureStore from './store/configureStore';
 import { getAuth } from './actions/account';
@@ -31,6 +32,7 @@ ReactDOM.render(
           <Route exact path="/home" component={App} />
           <Route exact path="/register" component={CreateAccount} />
           <Route exact path="/users-list" component={UsersList} />
+          <Route exact path="/user/update/:accountId" component={UpdateUser} />
           <Route exact path="/login" component={Login} />
           <Redirect from="/" to="/home" />
         </Switch>

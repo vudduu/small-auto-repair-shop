@@ -1,6 +1,7 @@
 /* eslint no-underscore-dangle: [2, { "allow": ["_id"] }] */
 
 import {
+  UPDATE_ACCOUNT,
   DELETE_ACCOUNT,
   LOAD_ACCOUNTS_LIST,
   ACCOUNTS_LIST_LOADING,
@@ -34,11 +35,27 @@ function loadAccountsList(state, action) {
   });
 }
 
-function removeUser(state, action) {
+function handleRemoveUser(state, action) {
   const { accountId } = action;
   const accountsList = state.accountsList.filter(account => (
     accountId !== account._id
   ));
+  return { ...state, accountsList };
+}
+
+function handleUpdateAccount(state, action) {
+  const accountsList = state.accountsList.map((account) => {
+    if (action.accountId === account._id) {
+      return {
+        ...account,
+        email: action.data.email,
+        name: action.data.name,
+        enabled: action.data.enabled,
+        role: action.data.role,
+      };
+    }
+    return account;
+  });
   return { ...state, accountsList };
 }
 
@@ -49,7 +66,9 @@ export default function (state = defaultAccountsState, action = {}) {
     case ACCOUNTS_LIST_LOADING:
       return setAccountsListLoading(state, action);
     case DELETE_ACCOUNT:
-      return removeUser(state, action);
+      return handleRemoveUser(state, action);
+    case UPDATE_ACCOUNT:
+      return handleUpdateAccount(state, action);
     default:
       return state;
   }

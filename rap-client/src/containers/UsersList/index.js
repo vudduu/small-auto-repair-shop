@@ -21,7 +21,7 @@ const Loader = halogen.RingLoader;
 
 class UsersList extends Component {
   static propTypes = {
-    // history: PropTypes.object.isRequired,
+    history: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired,
     accountsList: PropTypes.array.isRequired,
     accountsListLoading: PropTypes.bool.isRequired,
@@ -39,6 +39,7 @@ class UsersList extends Component {
     };
 
     this.goRepairsList = this.goRepairsList.bind(this);
+    this.openUpdateUser = this.openUpdateUser.bind(this);
     this.onClickMoreAccountsLoad = this.onClickMoreAccountsLoad.bind(this);
     this.confirmDeleteUser = this.confirmDeleteUser.bind(this);
     this.clickDeleteOnConfirmation = this.clickDeleteOnConfirmation.bind(this);
@@ -62,8 +63,7 @@ class UsersList extends Component {
   }
 
   openUpdateUser(userM) {
-    console.log(userM);
-    // this.navigate("/user/update/" + userM._id);
+    this.props.history.push(`/user/update/${userM._id}`);
   }
 
   confirmDeleteUser(userM) {
