@@ -7,35 +7,58 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import DayPicker from 'react-day-picker';
 import ReactModal from 'react-modal';
+import halogen from 'halogen';
 
 import 'react-day-picker/lib/style.css';
 import './index.css';
 
 import { getAllAccountsIdsNames } from '../../actions/account';
-import { repairCreate } from '../../actions/repair';
+import { repairUpdate, loadRepairById } from '../../actions/repair';
 import ErrorPanel from '../../components/errorPanel';
 import Dropdown from '../../components/dropdown';
 import UserPicker from '../UserPicker';
 
-class CreateRepair extends Component {
+const Loader = halogen.RingLoader;
+
+class UpdateRepair extends Component {
   static propTypes = {
+    match: PropTypes.object.isRequired,
     accountsIds: PropTypes.array.isRequired,
     getAllAccountsIdsNames: PropTypes.func.isRequired,
-    repairCreate: PropTypes.func.isRequired,
+    repairUpdate: PropTypes.func.isRequired,
+    loadRepairById: PropTypes.func.isRequired,
+
+    hours: PropTypes.any,
+    date: PropTypes.any,
+    owner: PropTypes.string,
+    vehicle: PropTypes.string,
+    complete: PropTypes.number,
+    repairsListLoading: PropTypes.bool.isRequired,
+  };
+
+  static defaultProps = {
+    hours: '',
+    date: null,
+    owner: null,
+    vehicle: '',
+    complete: 0,
   };
 
   constructor(props) {
     super(props);
     this.state = {
-      hour: '',
-      date: null,
-      userId: null,
+      hour: props.hours,
+      date: new Date(props.date),
+      userId: props.owner,
+      vehicle: props.vehicle,
+      complete: props.complete,
       errorMessage: '',
       errorPanelShow: false,
       openDatePicker: false,
       openUserPicker: false,
     };
 
+    this.changeComplete = this.changeComplete.bind(this);
     this.saveRepair = this.saveRepair.bind(this);
     this.handleDayClick = this.handleDayClick.bind(this);
     this.onErrorPanelClose = this.onErrorPanelClose.bind(this);
@@ -46,7 +69,21 @@ class CreateRepair extends Component {
     this.onUserPickerOpen = this.onUserPickerOpen.bind(this);
     this.onUserPickerClose = this.onUserPickerClose.bind(this);
     this.handleUserClick = this.handleUserClick.bind(this);
+    this.inputUpdateVehicle = this.inputUpdateVehicle.bind(this);
     props.getAllAccountsIdsNames();
+    props.loadRepairById(props.match.params.repairId);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.owner && this.props.owner == null) {
+      this.setState({
+        hour: nextProps.hours,
+        date: new Date(nextProps.date),
+        userId: nextProps.owner,
+        complete: nextProps.complete,
+        vehicle: nextProps.vehicle,
+      });
+    }
   }
 
   saveRepair() {
@@ -57,10 +94,12 @@ class CreateRepair extends Component {
         errorPanelShow: true,
       });
     } else {
-      this.props.repairCreate(
+      this.props.repairUpdate(
+        this.props.match.params.repairId,
         this.state.userId,
         this.state.date,
         this.state.hour,
+        this.state.complete,
         this.vehicle.value,
       );
     }
@@ -125,12 +164,25 @@ class CreateRepair extends Component {
     return userName;
   }
 
+  inputUpdateVehicle() {
+    this.setState({ vehicle: this.vehicle.value });
+  }
+
+  changeComplete() {
+    this.setState({ complete: 1 - this.state.complete });
+  }
+
   render() {
     const options = this.getDropDownOptions();
+    if (this.props.repairsListLoading) {
+      return (
+        <div className="peb-center-ctn peb-update-repair">
+          <div className="hv-loading"><Loader color="#006494" /></div>
+        </div>
+      );
+    }
     return (
-      <div
-        className="peb-center-ctn peb-create-repair"
-      >
+      <div className="peb-center-ctn peb-update-repair">
         <div className="row">
           <label htmlFor="vehicle">
             VIN:
@@ -139,7 +191,9 @@ class CreateRepair extends Component {
             type="text"
             className="peb-input peb-input-txt"
             id="vehicle"
+            value={this.state.vehicle}
             ref={(o) => { this.vehicle = o; }}
+            onChange={this.inputUpdateVehicle}
           />
         </div>
 
@@ -151,7 +205,9 @@ class CreateRepair extends Component {
             onClick={this.onDatePickerOpen}
           >
             {this.state.date === null ? 'Select Date' : (
-              <div className="date">{this.state.date.toDateString()}</div>
+              <div className="date">
+                {this.state.date.toDateString && this.state.date.toDateString()}
+              </div>
             )}
           </button>
           <ReactModal
@@ -205,6 +261,18 @@ class CreateRepair extends Component {
           />
         </div>
 
+        <div className="div-group">
+          <label htmlFor="completeControl">Complete:</label>
+          <div className="complete-label">{this.state.complete === 1 ? 'True' : 'False'}</div>
+          <button
+            id="completeControl"
+            className="peb-input"
+            onClick={this.changeComplete}
+          >
+            {this.state.complete ? 'Incomplete' : 'Completed'}
+          </button>
+        </div>
+
         <ErrorPanel
           show={this.state.errorPanelShow}
           onClose={this.onErrorPanelClose}
@@ -217,7 +285,7 @@ class CreateRepair extends Component {
             className="peb-input create-button"
             onClick={this.saveRepair}
           >
-            Create
+            Update
           </button>
         </div>
       </div>
@@ -226,12 +294,20 @@ class CreateRepair extends Component {
 }
 
 export default connect(
-  ({ account, accounts }) => ({
-    account,
-    accountsIds: accounts.accountsIds,
-  }),
+  ({ account, accounts, repairs }, { match }) => {
+    const [repair] = repairs.repairsList.filter(rep => (
+      rep._id === match.params.repairId
+    ));
+    return {
+      account,
+      accountsIds: accounts.accountsIds,
+      repairsListLoading: repairs.repairsListLoading,
+      ...repair,
+    };
+  },
   dispatch => bindActionCreators({
     getAllAccountsIdsNames,
-    repairCreate,
+    repairUpdate,
+    loadRepairById,
   }, dispatch),
-)(CreateRepair);
+)(UpdateRepair);

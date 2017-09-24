@@ -1,0 +1,11 @@
+@import "../../base.css";
+
+.peb-repair-item {
+  margin: 10px;
+  padding: 5px;
+  border-radius: 4px;
+  border: $color5 2px solid;
+}
+.peb-repair-item div {
+  font-family: $font1;
+}

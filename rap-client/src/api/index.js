@@ -91,20 +91,20 @@ class ClientAPI {
     return requestPromised(`${baseURI}/api/account/get-all-ids`, options);
   }
 
-  repairCreate(userId, date, hours) {
+  repairCreate(userId, date, hours, vehicle) {
     const options = {
       ...optionsDefault,
       method: 'post',
-      body: JSON.stringify({ userId, date, hours }),
+      body: JSON.stringify({ userId, date, hours, vehicle }),
     };
     return requestPromised(`${baseURI}/api/repair/create`, options);
   }
 
-  repairUpdate(repairId, userId, date, hours, complete) {
+  repairUpdate(repairId, userId, date, hours, complete, vehicle) {
     const options = {
       ...optionsDefault,
       method: 'put',
-      body: JSON.stringify({ userId, date, hours, complete }),
+      body: JSON.stringify({ userId, date, hours, complete, vehicle }),
     };
     return requestPromised(`${baseURI}/api/repair/update/${repairId}`, options);
   }
@@ -144,6 +144,13 @@ class ClientAPI {
       body: JSON.stringify({ comment }),
     };
     return requestPromised(`${baseURI}/api/repair/${repairId}/comment`, options);
+  }
+
+  getRepairById(repairId) {
+    const options = {
+      ...optionsDefault,
+    };
+    return requestPromised(`${baseURI}/api/repair/by-id/${repairId}`, options);
   }
 }
 

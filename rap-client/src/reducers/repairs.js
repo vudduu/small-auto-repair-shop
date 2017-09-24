@@ -2,6 +2,9 @@
 
 import {
   CREATE_REPAIR,
+  LOAD_REPAIR,
+  LOAD_REPAIRS,
+  LOAD_REPAIRS_LOADING,
 } from '../constants';
 
 const defaultRepairsState = {
@@ -9,34 +12,63 @@ const defaultRepairsState = {
   repairsList: [],
 };
 
-// function setRepairsListLoading(state, action) {
-//   return Object.assign({}, state, {
-//     repairsListLoading: action.value,
-//   });
-// }
-//
-// function existsOnList(list, item) {
-//   return list.reduce((flag, aux) => (
-//     flag || item._id === aux._id
-//   ), false);
-// }
+function existsOnList(list, item) {
+  return list.reduce((flag, aux) => (
+    flag || item._id === aux._id
+  ), false);
+}
 
 function handleCreateRepair(state, action) {
   const repairsList = [...state.repairsList, {
     _id: action._id,
     complete: action.complete,
     comments: action.comments,
-    date: action.date,
+    date: new Date(action.date),
     hours: action.hours,
     owner: action.owner,
   }];
   return { ...state, repairsList };
 }
 
+function handleLoadRepairs(state, action) {
+  const newRepairs = action.repair
+    .filter(rep => !existsOnList(state.repairsList, rep))
+    .map(rep => ({ ...rep, date: new Date(rep.date) }));
+  const repairsList = [...state.repairsList, ...newRepairs].sort((a, b) => {
+    if (a.date < b.date) return -1;
+    if (a.date > b.date) return 1;
+    return a.hours - b.hours;
+  });
+  return { ...state, repairsList, repairsListLoading: false };
+}
+
+function handleLoadRepair(state, action) {
+  let repairsList = state.repairsList;
+  if (!existsOnList(state.repairsList, action)) {
+    repairsList = [...state.repairsList, action].sort((a, b) => {
+      if (a.date < b.date) return -1;
+      if (a.date > b.date) return 1;
+      return a.hours - b.hours;
+    });
+  }
+  return { ...state, repairsList, repairsListLoading: false };
+}
+
+function handleLoadRepairsLoading(state, action) {
+  const repairsListLoading = action.value;
+  return { ...state, repairsListLoading };
+}
+
 export default function (state = defaultRepairsState, action = {}) {
   switch (action.type) {
     case CREATE_REPAIR:
       return handleCreateRepair(state, action);
+    case LOAD_REPAIR:
+      return handleLoadRepair(state, action);
+    case LOAD_REPAIRS:
+      return handleLoadRepairs(state, action);
+    case LOAD_REPAIRS_LOADING:
+      return handleLoadRepairsLoading(state, action);
     default:
       return state;
   }

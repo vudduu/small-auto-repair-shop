@@ -58,8 +58,7 @@ class UsersList extends Component {
   }
 
   goRepairsList(userM) {
-    console.log(userM);
-    // this.navigate("/account-repairs/" + userM._id);
+    this.props.history.push(`/user-repairs/${userM._id}`);
   }
 
   openUpdateUser(userM) {
@@ -86,11 +85,7 @@ class UsersList extends Component {
   }
 
   onClickMoreAccountsLoad() {
-    // const page = AccountStore.getAccountsListNextPage();
-    // AccountActionCreators.getAccountsList({
-    //   page: page
-    // });
-    this.props.getAccountsList(0);
+    this.props.getAccountsList(this.props.accountsList.length / 5);
   }
 
   onChange() {

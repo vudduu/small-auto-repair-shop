@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-// import { connect } from 'react-redux';
-// import { bindActionCreators } from 'redux';
 
 import './dropdown.css';
 
@@ -31,15 +29,10 @@ class Dropdown extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      selected: '',
+      selected: this.getSelectedFromProps(props),
     };
     this.handleChange = this.handleChange.bind(this);
   }
-
-  // getInitialState() {
-  //   const selected = this.getSelectedFromProps(this.props);
-  //   return { selected };
-  // }
 
   componentWillReceiveProps(nextProps) {
     const selected = this.getSelectedFromProps(nextProps);
@@ -68,7 +61,6 @@ class Dropdown extends Component {
 
   render() {
     const { value } = this.props;
-
     const options = this.props.options.map((option, i) => {
       const valueOp = option[this.props.valueField];
       const selected = valueOp === value || (i === 0 && value === -1);

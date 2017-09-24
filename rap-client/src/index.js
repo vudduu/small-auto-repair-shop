@@ -14,8 +14,10 @@ import App from './containers/App';
 import Login from './containers/Login';
 import CreateAccount from './containers/CreateAccount';
 import CreateRepair from './containers/CreateRepair';
+import UpdateRepair from './containers/UpdateRepair';
 import HeaderNav from './containers/HeaderNav';
 import UsersList from './containers/UsersList';
+import UserRepairs from './containers/UserRepairs';
 import UpdateUser from './containers/UpdateUser';
 import registerServiceWorker from './registerServiceWorker';
 import configureStore from './store/configureStore';
@@ -32,7 +34,9 @@ ReactDOM.render(
         <Switch>
           <Route exact path="/home" component={App} />
           <Route exact path="/register" component={CreateAccount} />
+          <Route exact path="/user-repairs/:accountId" component={UserRepairs} />
           <Route exact path="/create-repair" component={CreateRepair} />
+          <Route exact path="/update-repair/:repairId" component={UpdateRepair} />
           <Route exact path="/users-list" component={UsersList} />
           <Route exact path="/user/update/:accountId" component={UpdateUser} />
           <Route exact path="/login" component={Login} />
