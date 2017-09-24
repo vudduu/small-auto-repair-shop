@@ -152,6 +152,13 @@ class ClientAPI {
     };
     return requestPromised(`${baseURI}/api/repair/by-id/${repairId}`, options);
   }
+
+  getRepairsByDate(date) {
+    const options = {
+      ...optionsDefault,
+    };
+    return requestPromised(`${baseURI}/api/repair/by-date?date=${date}`, options);
+  }
 }
 
 export const client = new ClientAPI();

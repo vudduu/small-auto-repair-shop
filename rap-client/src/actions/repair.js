@@ -1,6 +1,7 @@
 import {
   CREATE_REPAIR,
   UPDATE_REPAIR,
+  DELETE_REPAIR,
   LOAD_REPAIRS,
   LOAD_REPAIR,
   LOAD_REPAIRS_LOADING,
@@ -56,4 +57,26 @@ export function loadRepairById(repairId) {
         return res;
       });
   };
+}
+
+export function loadRepairsByDate(date) {
+  return (dispatch) => {
+    dispatch({ type: LOAD_REPAIRS_LOADING, value: true });
+    return client.getRepairsByDate(date)
+      .then((res) => {
+        dispatch({ type: LOAD_REPAIRS, repair: res.repairs });
+        dispatch({ type: LOAD_REPAIRS_LOADING, value: false });
+        return res;
+      });
+  };
+}
+
+export function deleteRepair(repairId) {
+  return dispatch => (
+    client.repairDelete(repairId)
+      .then((res) => {
+        dispatch({ type: DELETE_REPAIR, repairId });
+        return res;
+      })
+  );
 }

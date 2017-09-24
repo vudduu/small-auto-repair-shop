@@ -2,6 +2,7 @@
 
 import {
   CREATE_REPAIR,
+  DELETE_REPAIR,
   LOAD_REPAIR,
   LOAD_REPAIRS,
   LOAD_REPAIRS_LOADING,
@@ -30,11 +31,19 @@ function handleCreateRepair(state, action) {
   return { ...state, repairsList };
 }
 
+function handleDeleteRepair(state, action) {
+  const repairsList = state.repairsList.filter(rep => (
+    rep._id !== action.repairId
+  ));
+  return { ...state, repairsList };
+}
+
 function handleLoadRepairs(state, action) {
-  const newRepairs = action.repair
-    .filter(rep => !existsOnList(state.repairsList, rep))
-    .map(rep => ({ ...rep, date: new Date(rep.date) }));
-  const repairsList = [...state.repairsList, ...newRepairs].sort((a, b) => {
+  const oldRepairsList = state.repairsList.filter(rep => !existsOnList(action.repair, rep));
+  const newRepairs = action.repair.map(rep => (
+    { ...rep, date: new Date(rep.date) }
+  ));
+  const repairsList = [...oldRepairsList, ...newRepairs].sort((a, b) => {
     if (a.date < b.date) return -1;
     if (a.date > b.date) return 1;
     return a.hours - b.hours;
@@ -45,7 +54,10 @@ function handleLoadRepairs(state, action) {
 function handleLoadRepair(state, action) {
   let repairsList = state.repairsList;
   if (!existsOnList(state.repairsList, action)) {
-    repairsList = [...state.repairsList, action].sort((a, b) => {
+    repairsList = [
+      ...state.repairsList,
+      { ...action, date: new Date(action.date) },
+    ].sort((a, b) => {
       if (a.date < b.date) return -1;
       if (a.date > b.date) return 1;
       return a.hours - b.hours;
@@ -63,6 +75,8 @@ export default function (state = defaultRepairsState, action = {}) {
   switch (action.type) {
     case CREATE_REPAIR:
       return handleCreateRepair(state, action);
+    case DELETE_REPAIR:
+      return handleDeleteRepair(state, action);
     case LOAD_REPAIR:
       return handleLoadRepair(state, action);
     case LOAD_REPAIRS:

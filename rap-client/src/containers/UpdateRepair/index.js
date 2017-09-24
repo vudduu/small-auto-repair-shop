@@ -13,7 +13,7 @@ import 'react-day-picker/lib/style.css';
 import './index.css';
 
 import { getAllAccountsIdsNames } from '../../actions/account';
-import { repairUpdate, loadRepairById } from '../../actions/repair';
+import { repairUpdate, loadRepairById, loadRepairsByDate } from '../../actions/repair';
 import ErrorPanel from '../../components/errorPanel';
 import Dropdown from '../../components/dropdown';
 import UserPicker from '../UserPicker';
@@ -27,12 +27,14 @@ class UpdateRepair extends Component {
     getAllAccountsIdsNames: PropTypes.func.isRequired,
     repairUpdate: PropTypes.func.isRequired,
     loadRepairById: PropTypes.func.isRequired,
+    loadRepairsByDate: PropTypes.func.isRequired,
 
     hours: PropTypes.any,
     date: PropTypes.any,
     owner: PropTypes.string,
     vehicle: PropTypes.string,
     complete: PropTypes.number,
+    repairsList: PropTypes.array.isRequired,
     repairsListLoading: PropTypes.bool.isRequired,
   };
 
@@ -57,7 +59,6 @@ class UpdateRepair extends Component {
       openDatePicker: false,
       openUserPicker: false,
     };
-
     this.changeComplete = this.changeComplete.bind(this);
     this.saveRepair = this.saveRepair.bind(this);
     this.handleDayClick = this.handleDayClick.bind(this);
@@ -72,6 +73,9 @@ class UpdateRepair extends Component {
     this.inputUpdateVehicle = this.inputUpdateVehicle.bind(this);
     props.getAllAccountsIdsNames();
     props.loadRepairById(props.match.params.repairId);
+    if (props.date) {
+      this.props.loadRepairsByDate(new Date(props.date));
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -83,7 +87,14 @@ class UpdateRepair extends Component {
         complete: nextProps.complete,
         vehicle: nextProps.vehicle,
       });
+      this.props.loadRepairsByDate(new Date(nextProps.date));
     }
+  }
+
+  isSameDate(date1, date2) {
+    return date1.getDate() === date2.getDate() &&
+      date1.getMonth() === date2.getMonth() &&
+      date1.getYear() === date2.getYear();
   }
 
   saveRepair() {
@@ -108,6 +119,7 @@ class UpdateRepair extends Component {
   handleDayClick(day, props) {
     if (!props.disabled) {
       this.setState({ date: day });
+      this.props.loadRepairsByDate(day);
     }
   }
 
@@ -141,15 +153,33 @@ class UpdateRepair extends Component {
 
   getDropDownOptions() {
     const options = [];
+    const stateDate = this.state.date;
+    if (this.props.repairsListLoading || !stateDate) {
+      return [{
+        description: 'Loading...',
+        code: '',
+      }];
+    }
+    console.log('stateDate', stateDate);
+    console.log('this.props.date', this.props.date);
+    const isSameDate = this.isSameDate(stateDate, this.props.date);
+    const repairsList = this.props.repairsList.filter(rep => (
+      rep.date &&
+      rep.date.getDate() === stateDate.getDate() &&
+      rep.date.getMonth() === stateDate.getMonth() &&
+      rep.date.getYear() === stateDate.getYear()
+    )).map(rep => rep.hours);
     options.push({
       description: 'Select an Hour',
       code: '',
     });
     for (let i = 8; i <= 20; i += 1) {
-      options.push({
-        description: i.toString(),
-        code: i,
-      });
+      if (!repairsList.includes(i) || (isSameDate && i === this.props.hours)) {
+        options.push({
+          description: i.toString(),
+          code: i,
+        });
+      }
     }
     return options;
   }
@@ -173,14 +203,14 @@ class UpdateRepair extends Component {
   }
 
   render() {
-    const options = this.getDropDownOptions();
-    if (this.props.repairsListLoading) {
+    if (this.props.repairsListLoading || !this.props.date) {
       return (
         <div className="peb-center-ctn peb-update-repair">
           <div className="hv-loading"><Loader color="#006494" /></div>
         </div>
       );
     }
+    const options = this.getDropDownOptions();
     return (
       <div className="peb-center-ctn peb-update-repair">
         <div className="row">
@@ -298,16 +328,19 @@ export default connect(
     const [repair] = repairs.repairsList.filter(rep => (
       rep._id === match.params.repairId
     ));
-    return {
+    const state = {
       account,
       accountsIds: accounts.accountsIds,
+      repairsList: repairs.repairsList,
       repairsListLoading: repairs.repairsListLoading,
-      ...repair,
     };
+    if (repair) return { ...state, ...repair };
+    return state;
   },
   dispatch => bindActionCreators({
     getAllAccountsIdsNames,
     repairUpdate,
     loadRepairById,
+    loadRepairsByDate,
   }, dispatch),
 )(UpdateRepair);

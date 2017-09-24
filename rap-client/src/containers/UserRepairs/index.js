@@ -10,7 +10,7 @@ import halogen from 'halogen';
 
 import './index.css';
 
-import { getRepairsFromUserByDate } from '../../actions/repair';
+import { getRepairsFromUserByDate, deleteRepair } from '../../actions/repair';
 
 import FilterDateRange from '../../components/filterDateRange';
 import ConfirmationPanel from '../../components/confirmationPanel';
@@ -28,7 +28,7 @@ class UserRepairs extends Component {
     repairs: PropTypes.object.isRequired,
     accountsList: PropTypes.array.isRequired,
     getRepairsFromUserByDate: PropTypes.func.isRequired,
-    // deleteRepair: PropTypes.func.isRequired,
+    deleteRepair: PropTypes.func.isRequired,
   };
 
   constructor(props) {
@@ -37,7 +37,7 @@ class UserRepairs extends Component {
       complete: false,
       query: '',
       deleteConfirmationShow: false,
-      lastUserId: '',
+      lastRepairId: '',
       range: {},
     };
 
@@ -72,27 +72,23 @@ class UserRepairs extends Component {
     this.props.history.push(`/update-repair/${repairM._id}`);
   }
 
-  confirmDeleteRepair(userM) {
+  confirmDeleteRepair(repairM) {
     this.setState({
-      lastUserId: userM._id,
+      lastRepairId: repairM._id,
       deleteConfirmationShow: true,
     });
   }
 
   clickDeleteOnConfirmation(option) {
     if (option === 'yes') {
-      if (this.state.lastUserId) {
-        // this.props.deleteAccount(this.state.lastUserId);
+      if (this.state.lastRepairId) {
+        this.props.deleteRepair(this.state.lastRepairId);
       }
     }
     this.setState({
-      lastUserId: '',
+      lastRepairId: '',
       deleteConfirmationShow: false,
     });
-  }
-
-  onChange() {
-    // this.setState(getStateFromStores(this.state.query));
   }
 
   onNewDateFilter(range) {
@@ -152,7 +148,7 @@ class UserRepairs extends Component {
           open={this.state.deleteConfirmationShow}
           clickOnOption={this.clickDeleteOnConfirmation}
         >
-          Are you sure ?
+          Are you sure you want to delete this item ? This action cannot be undone.
         </ConfirmationPanel>
       </div>
     );
@@ -168,5 +164,6 @@ export default connect(
   }),
   dispatch => bindActionCreators({
     getRepairsFromUserByDate,
+    deleteRepair,
   }, dispatch),
 )(UserRepairs);

@@ -12,7 +12,7 @@ import 'react-day-picker/lib/style.css';
 import './index.css';
 
 import { getAllAccountsIdsNames } from '../../actions/account';
-import { repairCreate } from '../../actions/repair';
+import { repairCreate, loadRepairsByDate } from '../../actions/repair';
 import ErrorPanel from '../../components/errorPanel';
 import Dropdown from '../../components/dropdown';
 import UserPicker from '../UserPicker';
@@ -20,8 +20,11 @@ import UserPicker from '../UserPicker';
 class CreateRepair extends Component {
   static propTypes = {
     accountsIds: PropTypes.array.isRequired,
+    repairsList: PropTypes.array.isRequired,
+    repairsListLoading: PropTypes.bool.isRequired,
     getAllAccountsIdsNames: PropTypes.func.isRequired,
     repairCreate: PropTypes.func.isRequired,
+    loadRepairsByDate: PropTypes.func.isRequired,
   };
 
   constructor(props) {
@@ -46,6 +49,7 @@ class CreateRepair extends Component {
     this.onUserPickerOpen = this.onUserPickerOpen.bind(this);
     this.onUserPickerClose = this.onUserPickerClose.bind(this);
     this.handleUserClick = this.handleUserClick.bind(this);
+    this.getDropDownOptions = this.getDropDownOptions.bind(this);
     props.getAllAccountsIdsNames();
   }
 
@@ -69,6 +73,7 @@ class CreateRepair extends Component {
   handleDayClick(day, props) {
     if (!props.disabled) {
       this.setState({ date: day });
+      this.props.loadRepairsByDate(day);
     }
   }
 
@@ -102,15 +107,30 @@ class CreateRepair extends Component {
 
   getDropDownOptions() {
     const options = [];
+    const stateDate = this.state.date;
+    if (this.props.repairsListLoading || !stateDate) {
+      return [{
+        description: 'Loading...',
+        code: '',
+      }];
+    }
+    const repairsList = this.props.repairsList.filter(rep => (
+      rep.date &&
+      rep.date.getDate() === stateDate.getDate() &&
+      rep.date.getMonth() === stateDate.getMonth() &&
+      rep.date.getYear() === stateDate.getYear()
+    )).map(rep => rep.hours);
     options.push({
       description: 'Select an Hour',
       code: '',
     });
     for (let i = 8; i <= 20; i += 1) {
-      options.push({
-        description: i.toString(),
-        code: i,
-      });
+      if (!repairsList.includes(i)) {
+        options.push({
+          description: i.toString(),
+          code: i,
+        });
+      }
     }
     return options;
   }
@@ -175,7 +195,7 @@ class CreateRepair extends Component {
 
         {this.state.date ? (
           <div className="row">
-            <label htmlFor="myDropdownCreate">Hour:</label>
+            <label htmlFor="myDropdownCreate">Available Hours:</label>
             <Dropdown
               id="myDropdownCreate"
               options={options}
@@ -226,12 +246,15 @@ class CreateRepair extends Component {
 }
 
 export default connect(
-  ({ account, accounts }) => ({
+  ({ account, accounts, repairs }) => ({
     account,
     accountsIds: accounts.accountsIds,
+    repairsList: repairs.repairsList,
+    repairsListLoading: repairs.repairsListLoading,
   }),
   dispatch => bindActionCreators({
     getAllAccountsIdsNames,
+    loadRepairsByDate,
     repairCreate,
   }, dispatch),
 )(CreateRepair);
