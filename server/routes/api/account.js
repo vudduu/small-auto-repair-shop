@@ -145,11 +145,28 @@ module.exports = {
     }
   },
 
+  getAccountById(req, res, next) {
+    if (!req.isAuthenticated() || !req.query.accountId) {
+      return res.json({ success: false });
+    }
+    const accountId = req.query.accountId;
+    AccountModel.findById(accountId, (err, accountM) => {
+      if (err) return next(err);
+      if (accountM) {
+        const accountObj = accountM.toObject();
+        delete accountObj.password;
+        res.json({
+          success: true,
+          data: accountObj,
+        });
+      } else {
+        res.json({ success: false });
+      }
+    });
+  },
+
   /**
    * ROLE >= 3 (manager, admin, super user)
-   * @param req
-   * @param res
-   * @param next
    */
   getAll(req, res, next) {
     if (!req.isAuthenticated()) {
@@ -176,6 +193,30 @@ module.exports = {
         res.json({
           success: true,
           accounts: accounts,
+        });
+      });
+  },
+
+  /**
+   * ROLE >= 3 (manager, admin, super user)
+   */
+  getAllIds(req, res, next) {
+    if (!req.isAuthenticated()) {
+      return res.json({ success: false });
+    }
+    AccountModel
+      .find({
+        // $or:[{"role": 2},{"role": 3}]
+        "role": { $lt: 3 }
+      }) // regular users only
+      .select('_id name enabled')
+      .sort({ name: 'asc' })
+      .lean()
+      .exec((err, accounts) => {
+        if (err) return next(err);
+        res.json({
+          success: true,
+          accounts,
         });
       });
   }
