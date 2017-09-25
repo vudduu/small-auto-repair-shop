@@ -6,6 +6,7 @@ import {
   LOAD_REPAIR,
   LOAD_REPAIRS,
   LOAD_REPAIRS_LOADING,
+  ADD_COMMENT,
 } from '../constants';
 
 const defaultRepairsState = {
@@ -71,6 +72,23 @@ function handleLoadRepairsLoading(state, action) {
   return { ...state, repairsListLoading };
 }
 
+function handleAddComment(state, action) {
+  const repairsList = state.repairsList.map((repair) => {
+    if (repair._id === action.data._id) {
+      return {
+        _id: action.data._id,
+        complete: action.data.complete,
+        comments: action.data.comments,
+        date: new Date(action.data.date),
+        hours: action.data.hours,
+        owner: action.data.owner,
+      };
+    }
+    return repair;
+  });
+  return { ...state, repairsList };
+}
+
 export default function (state = defaultRepairsState, action = {}) {
   switch (action.type) {
     case CREATE_REPAIR:
@@ -83,6 +101,8 @@ export default function (state = defaultRepairsState, action = {}) {
       return handleLoadRepairs(state, action);
     case LOAD_REPAIRS_LOADING:
       return handleLoadRepairsLoading(state, action);
+    case ADD_COMMENT:
+      return handleAddComment(state, action);
     default:
       return state;
   }

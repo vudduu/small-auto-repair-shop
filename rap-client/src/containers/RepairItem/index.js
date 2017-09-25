@@ -1,5 +1,10 @@
+/* eslint no-underscore-dangle: [2, { "allow": ["_id"] }] */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import {
+  NavLink,
+} from 'react-router-dom';
 
 import './index.css';
 
@@ -19,6 +24,7 @@ class RepairItem extends Component {
     super(props);
     this.onUpdateClick = this.onUpdateClick.bind(this);
     this.onDeleteClick = this.onDeleteClick.bind(this);
+    this.onClick = this.onClick.bind(this);
   }
 
   onUpdateClick() {
@@ -35,6 +41,10 @@ class RepairItem extends Component {
     }
   }
 
+  onClick() {
+    console.log(this.props.data._id);
+  }
+
   render() {
     const { data } = this.props;
     const date = data.date ? (new Date(data.date)).toDateString() : '';
@@ -46,6 +56,11 @@ class RepairItem extends Component {
           {data.vehicle}<br />
           {date} - {hourFormat} ({label})
         </div>
+        <NavLink
+          to={`/repair-view/${this.props.data._id}`}
+        >
+          Open
+        </NavLink>
         {!this.props.hideUpdateDelete ? (
           <button onClick={this.onUpdateClick} >
             Update

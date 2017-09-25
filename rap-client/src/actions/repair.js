@@ -5,6 +5,7 @@ import {
   LOAD_REPAIRS,
   LOAD_REPAIR,
   LOAD_REPAIRS_LOADING,
+  ADD_COMMENT,
 } from '../constants';
 
 import { client } from '../api';
@@ -81,6 +82,18 @@ export function deleteRepair(repairId) {
       .then((res) => {
         if (res.success) {
           dispatch({ type: DELETE_REPAIR, repairId });
+        }
+        return res;
+      })
+  );
+}
+
+export function addCommentRepair(repairId, comment) {
+  return dispatch => (
+    client.addCommentRepair(repairId, comment)
+      .then((res) => {
+        if (res.success) {
+          dispatch({ type: ADD_COMMENT, ...res });
         }
         return res;
       })

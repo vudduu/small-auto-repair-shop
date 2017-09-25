@@ -15,6 +15,7 @@ import Login from './containers/Login';
 import CreateAccount from './containers/CreateAccount';
 import CreateRepair from './containers/CreateRepair';
 import UpdateRepair from './containers/UpdateRepair';
+import RepairView from './containers/RepairView';
 import HeaderNav from './containers/HeaderNav';
 import UsersList from './containers/UsersList';
 import UserRepairs from './containers/UserRepairs';
@@ -33,6 +34,7 @@ ReactDOM.render(
         <HeaderNav />
         <Switch>
           <Route exact path="/home" component={App} />
+          <Route exact path="/repair-view/:repairId" component={RepairView} />
           <Route exact path="/register" component={CreateAccount} />
           <Route exact path="/user-repairs/:accountId" component={UserRepairs} />
           <Route exact path="/create-repair" component={CreateRepair} />

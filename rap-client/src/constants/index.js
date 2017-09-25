@@ -13,3 +13,4 @@ export const DELETE_REPAIR = 'DELETE_REPAIR';
 export const LOAD_REPAIR = 'LOAD_REPAIR';
 export const LOAD_REPAIRS = 'LOAD_REPAIRS';
 export const LOAD_REPAIRS_LOADING = 'LOAD_REPAIRS_LOADING';
+export const ADD_COMMENT = 'ADD_COMMENT';

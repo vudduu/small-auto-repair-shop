@@ -31,6 +31,7 @@ class App extends Component {
     history: PropTypes.object.isRequired,
     account: PropTypes.object.isRequired,
     repairs: PropTypes.object.isRequired,
+    repairsListLoading: PropTypes.bool.isRequired,
     accountsList: PropTypes.array.isRequired,
     accountsIds: PropTypes.array.isRequired,
     getRepairsFromUserByDate: PropTypes.func.isRequired,
@@ -250,7 +251,7 @@ class App extends Component {
             ))}
           </ReactCSSTransitionGroup>
         </div>
-        {this.props.repairs.repairsListLoading ?
+        {this.props.repairsListLoading ?
           <div className="hv-loading"><Loader color="#006494" /></div>
           : null}
         <ConfirmationPanel
@@ -271,6 +272,7 @@ export default connect(
     accountsList: accounts.accountsList,
     accountsListLoading: accounts.accountsListLoading,
     repairs,
+    repairsListLoading: repairs.repairsListLoading,
   }),
   dispatch => bindActionCreators({
     getAllAccountsIdsNames,
