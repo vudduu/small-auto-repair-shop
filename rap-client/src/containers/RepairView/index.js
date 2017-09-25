@@ -100,8 +100,16 @@ class RepairView extends Component {
     this.setState({ errorPanelShow: false });
   }
 
+  getNameFromUserIds(userId) {
+    const [user] = this.props.accountsIds.filter(account => (
+      account._id === userId
+    ));
+    if (!user) return 'manager';
+    return user.name;
+  }
+
   getUserName() {
-    return this.props.account.name;
+    return this.getNameFromUserIds(this.props.owner);
   }
 
   changeComplete() {

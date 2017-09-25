@@ -19,6 +19,7 @@ import UserPicker from '../UserPicker';
 
 class CreateRepair extends Component {
   static propTypes = {
+    history: PropTypes.object.isRequired,
     accountsIds: PropTypes.array.isRequired,
     repairsList: PropTypes.array.isRequired,
     repairsListLoading: PropTypes.bool.isRequired,
@@ -66,7 +67,9 @@ class CreateRepair extends Component {
         this.state.date,
         this.state.hour,
         this.vehicle.value,
-      );
+      ).then((res) => {
+        this.props.history.push(`/repair-view/${res.data._id}`);
+      });
     }
   }
 

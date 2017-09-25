@@ -113,8 +113,7 @@ class CreateAccount extends Component {
         data.name,
         data.email,
         this.state.role,
-      ).then((o) => {
-        console.log(o);
+      ).then(() => {
         this.props.history.push('/home');
       });
     }
@@ -129,7 +128,7 @@ class CreateAccount extends Component {
   render() {
     const options = [];
     if (this.props.account.role !== VISITOR && this.props.account.role !== REGULAR) {
-      for (let i = 2; i <= 5; i += 1) {
+      for (let i = 2; i <= 3; i += 1) {
         options.push({
           description: LocalizedStrings.getString(`account_role.${i}`),
           code: i,

@@ -24,7 +24,6 @@ class RepairItem extends Component {
     super(props);
     this.onUpdateClick = this.onUpdateClick.bind(this);
     this.onDeleteClick = this.onDeleteClick.bind(this);
-    this.onClick = this.onClick.bind(this);
   }
 
   onUpdateClick() {
@@ -39,10 +38,6 @@ class RepairItem extends Component {
     if (this.props.onDeleteClick) {
       this.props.onDeleteClick(repairM);
     }
-  }
-
-  onClick() {
-    console.log(this.props.data._id);
   }
 
   getCompletedText() {
@@ -66,10 +61,9 @@ class RepairItem extends Component {
         <div className="peb-name">
           {data.vehicle}<br />
           {date} - {hourFormat} ({label})
+          <span>{data.comments.length} comments</span>
         </div>
-        <NavLink
-          to={`/repair-view/${this.props.data._id}`}
-        >
+        <NavLink to={`/repair-view/${this.props.data._id}`}>
           Open
         </NavLink>
         {!this.props.hideUpdateDelete ? (
