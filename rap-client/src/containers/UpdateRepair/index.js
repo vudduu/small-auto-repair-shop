@@ -22,6 +22,7 @@ const Loader = halogen.RingLoader;
 
 class UpdateRepair extends Component {
   static propTypes = {
+    account: PropTypes.object.isRequired,
     match: PropTypes.object.isRequired,
     accountsIds: PropTypes.array.isRequired,
     getAllAccountsIdsNames: PropTypes.func.isRequired,
