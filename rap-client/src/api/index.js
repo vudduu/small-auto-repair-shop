@@ -51,6 +51,13 @@ class ClientAPI {
     return requestPromised(`${baseURI}/api/account/get-auth`, options);
   }
 
+  getAccountById(accountId) {
+    const options = {
+      ...optionsDefault,
+    };
+    return requestPromised(`${baseURI}/api/account/by-id?accountId=${accountId}`, options);
+  }
+
   registerAccount(username, password, name, email, role) {
     const options = {
       ...optionsDefault,

@@ -152,3 +152,21 @@ export function getAllAccountsIdsNames() {
       });
   };
 }
+
+export function getAccountById(accountId) {
+  return (dispatch) => {
+    dispatch({ type: ACCOUNTS_LIST_LOADING, value: true });
+    return client.getAccountById(accountId)
+      .then((res) => {
+        if (res.success) {
+          dispatch({
+            type: LOAD_ACCOUNTS_LIST,
+            accounts: [res.data],
+          });
+        } else {
+          dispatch({ type: ACCOUNTS_LIST_LOADING, value: false });
+        }
+        return res;
+      });
+  };
+}

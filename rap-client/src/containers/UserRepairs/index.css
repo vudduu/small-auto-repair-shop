@@ -1,0 +1,15 @@
+@import "../../base.css";
+
+.peb-users-list .row {
+  margin: 10px;
+}
+
+.peb-users-list .row label {
+  padding: 5px;
+  margin-right: 10px;
+  font-family: $font1;
+}
+
+.peb-users-list .row .peb-input {
+  width: 200px;
+}

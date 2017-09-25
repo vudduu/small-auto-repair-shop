@@ -10,13 +10,19 @@ import halogen from 'halogen';
 
 import './index.css';
 
+import { getAllAccountsIdsNames, getAccountById } from '../../actions/account';
 import { getRepairsFromUserByDate, deleteRepair } from '../../actions/repair';
 
 import FilterDateRange from '../../components/filterDateRange';
 import ConfirmationPanel from '../../components/confirmationPanel';
 import RepairItem from '../RepairItem';
+import UserPicker from '../UserPicker';
 
 import { MANAGER } from '../../reducers/account';
+
+const ANY = 0;
+const COMPLETE = 1;
+const INCOMPLETE = 2;
 
 const Loader = halogen.RingLoader;
 
@@ -27,8 +33,11 @@ class UserRepairs extends Component {
     account: PropTypes.object.isRequired,
     repairs: PropTypes.object.isRequired,
     accountsList: PropTypes.array.isRequired,
+    accountsIds: PropTypes.array.isRequired,
     getRepairsFromUserByDate: PropTypes.func.isRequired,
+    getAllAccountsIdsNames: PropTypes.func.isRequired,
     deleteRepair: PropTypes.func.isRequired,
+    getAccountById: PropTypes.func.isRequired,
   };
 
   constructor(props) {
@@ -38,13 +47,23 @@ class UserRepairs extends Component {
       query: '',
       deleteConfirmationShow: false,
       lastRepairId: '',
-      range: {},
+      range: {
+        dateFrom: new Date(),
+        dateTo: new Date(),
+      },
+      userId: null,
+      openUserPicker: false,
+      filterComplete: 0,
     };
 
     this.openUpdateRepair = this.openUpdateRepair.bind(this);
     this.confirmDeleteRepair = this.confirmDeleteRepair.bind(this);
     this.clickDeleteOnConfirmation = this.clickDeleteOnConfirmation.bind(this);
     this.onNewDateFilter = this.onNewDateFilter.bind(this);
+    this.onUserPickerOpen = this.onUserPickerOpen.bind(this);
+    this.handleUserClick = this.handleUserClick.bind(this);
+    this.onUserPickerClose = this.onUserPickerClose.bind(this);
+    this.onCompleteChange = this.onCompleteChange.bind(this);
 
     this.loadInitialData(props);
   }
@@ -53,18 +72,26 @@ class UserRepairs extends Component {
     if (prevProps.account.logged !== this.props.account.logged) {
       this.loadInitialData(this.props);
     }
-    const userM = this.getCurrentUser();
-    if (!userM) {
-      this.props.history.push('/users-list');
+    if (prevProps.match.params.accountId !== this.props.match.params.accountId) {
+      this.loadInitialData(this.props);
     }
   }
 
   loadInitialData(props) {
+    const load = () => {
+      this.props.getAccountById(props.match.params.accountId);
+      this.props.getAllAccountsIdsNames();
+      this.props.getRepairsFromUserByDate(
+        props.match.params.accountId,
+        this.state.range.dateFrom,
+        this.state.range.dateTo,
+      );
+    };
     if (props.account.logged && props.account.role >= MANAGER && props.match.params.accountId) {
-      this.props.getRepairsFromUserByDate(props.match.params.accountId);
+      load();
     }
     if (props.account.id === props.match.params.accountId) {
-      this.props.getRepairsFromUserByDate(props.match.params.accountId);
+      load();
     }
   }
 
@@ -92,6 +119,7 @@ class UserRepairs extends Component {
   }
 
   onNewDateFilter(range) {
+    this.setState({ range });
     const { account, match } = this.props;
     if (account.logged && account.role >= MANAGER && match.params.accountId) {
       this.props.getRepairsFromUserByDate(match.params.accountId, range.dateFrom, range.dateTo);
@@ -99,7 +127,6 @@ class UserRepairs extends Component {
     if (account.id === match.params.accountId) {
       this.props.getRepairsFromUserByDate(match.params.accountId, range.dateFrom, range.dateTo);
     }
-    this.setState({ range });
   }
 
   getCurrentUser() {
@@ -109,11 +136,78 @@ class UserRepairs extends Component {
     ))[0] || null;
   }
 
+  isSameDate(date1, date2) {
+    return date1.getDate() === date2.getDate() &&
+      date1.getMonth() === date2.getMonth() &&
+      date1.getYear() === date2.getYear();
+  }
+
   getCurrentUserRepairList() {
     const { accountId } = this.props.match.params;
+    const { dateFrom, dateTo } = this.state.range;
+
+    const validFilterComplete = (rep) => {
+      switch (this.state.filterComplete) {
+        case ANY:
+          return true;
+        case COMPLETE:
+          return rep.complete;
+        case INCOMPLETE:
+          return !rep.complete;
+        default:
+          return false;
+      }
+    };
+    const validFilterDate = rep => (
+      (dateFrom <= rep.date && rep.date <= dateTo) ||
+      this.isSameDate(dateFrom, rep.date) ||
+      this.isSameDate(dateTo, rep.date)
+    );
     return this.props.repairs.repairsList.filter(rep => (
-      rep.owner === accountId
+      rep.owner === accountId && validFilterComplete(rep) && validFilterDate(rep)
     ));
+  }
+
+  onUserPickerOpen() {
+    this.setState({ openUserPicker: true });
+  }
+
+  handleUserClick(user) {
+    this.setState({ userId: user._id, openUserPicker: false });
+    this.props.history.push(`/user-repairs/${user._id}`);
+  }
+
+  onUserPickerClose() {
+    this.setState({ openUserPicker: false });
+  }
+
+  getUserName() {
+    let userName = '';
+    this.props.accountsIds.forEach((user) => {
+      if (user._id === this.state.userId) {
+        userName = user.name;
+      }
+    });
+    return userName;
+  }
+
+  onCompleteChange() {
+    this.setState({
+      filterComplete: (this.state.filterComplete + 1) % 3,
+    });
+  }
+
+  getCompleteStatusName() {
+    switch (this.state.filterComplete) {
+      case ANY:
+        return 'ANY';
+      case COMPLETE:
+        return 'COMPLETE';
+      case INCOMPLETE:
+        return 'INCOMPLETE';
+      default:
+        return '';
+    }
   }
 
   render() {
@@ -125,11 +219,38 @@ class UserRepairs extends Component {
       >
         <h2>{userM.name} repairs</h2>
         <FilterDateRange onNewFilter={this.onNewDateFilter} />
+        <div className="row">
+          <label htmlFor="userPicker">Filter By User:</label>
+          <button
+            id="userPicker"
+            className="peb-input"
+            onClick={this.onUserPickerOpen}
+          >
+            {this.state.userId === null ? 'Select another User' : (
+              <div className="user">{this.getUserName()}</div>
+            )}
+          </button>
+          <UserPicker
+            open={this.state.openUserPicker}
+            onUserClick={this.handleUserClick}
+            onClose={this.onUserPickerClose}
+          />
+        </div>
+        <div className="row">
+          <label htmlFor="completePicker">Filter By Status:</label>
+          <button
+            id="completePicker"
+            className="peb-input"
+            onClick={this.onCompleteChange}
+          >
+            <div className="complete">{this.getCompleteStatusName()}</div>
+          </button>
+        </div>
         <div className="peb-list">
           <ReactCSSTransitionGroup
             transitionName="repairs"
-            transitionEnterTimeout={1000}
-            transitionLeaveTimeout={1000}
+            transitionEnterTimeout={10}
+            transitionLeaveTimeout={10}
           >
             {this.getCurrentUserRepairList().map(repairM => (
               <RepairItem
@@ -158,12 +279,15 @@ class UserRepairs extends Component {
 export default connect(
   ({ account, accounts, repairs }) => ({
     account,
+    accountsIds: accounts.accountsIds,
     accountsList: accounts.accountsList,
     accountsListLoading: accounts.accountsListLoading,
     repairs,
   }),
   dispatch => bindActionCreators({
+    getAllAccountsIdsNames,
     getRepairsFromUserByDate,
     deleteRepair,
+    getAccountById,
   }, dispatch),
 )(UserRepairs);

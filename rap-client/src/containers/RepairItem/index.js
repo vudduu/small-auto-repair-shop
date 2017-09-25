@@ -5,9 +5,14 @@ import './index.css';
 
 class RepairItem extends Component {
   static propTypes = {
+    hideUpdateDelete: PropTypes.bool,
     onUpdateClick: PropTypes.func.isRequired,
     onDeleteClick: PropTypes.func.isRequired,
     data: PropTypes.object.isRequired,
+  };
+
+  static defaultProps = {
+    hideUpdateDelete: false,
   };
 
   constructor(props) {
@@ -41,12 +46,16 @@ class RepairItem extends Component {
           {data.vehicle}<br />
           {date} - {hourFormat} ({label})
         </div>
-        <button onClick={this.onUpdateClick} >
-          Update
-        </button>
-        <button onClick={this.onDeleteClick} >
-          Delete
-        </button>
+        {!this.props.hideUpdateDelete ? (
+          <button onClick={this.onUpdateClick} >
+            Update
+          </button>
+        ) : null}
+        {!this.props.hideUpdateDelete ? (
+          <button onClick={this.onDeleteClick} >
+            Delete
+          </button>
+        ) : null}
       </div>
     );
   }

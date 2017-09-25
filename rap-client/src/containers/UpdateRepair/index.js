@@ -160,8 +160,6 @@ class UpdateRepair extends Component {
         code: '',
       }];
     }
-    console.log('stateDate', stateDate);
-    console.log('this.props.date', this.props.date);
     const isSameDate = this.isSameDate(stateDate, this.props.date);
     const repairsList = this.props.repairsList.filter(rep => (
       rep.date &&
