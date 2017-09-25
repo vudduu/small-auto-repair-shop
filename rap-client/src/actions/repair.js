@@ -22,7 +22,7 @@ export function repairCreate(userId, date, hours, vehicle) {
   );
 }
 
-export function repairUpdate(repairId, userId, date, hours, complete, vehicle) {
+export function repairUpdate(repairId, userId, date, hours, complete, vehicle, completeRole) {
   const repair = {
     _id: repairId,
   };
@@ -31,6 +31,7 @@ export function repairUpdate(repairId, userId, date, hours, complete, vehicle) {
   if (hours) repair.hours = hours;
   if (complete) repair.complete = complete;
   if (vehicle) repair.vehicle = vehicle;
+  if (completeRole) repair.completeRole = completeRole;
   return dispatch => (
     client.repairUpdate(repairId, userId, date, hours, complete, vehicle)
       .then((res) => {

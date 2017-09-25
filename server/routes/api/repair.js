@@ -42,9 +42,9 @@ module.exports = {
         }
         if (req.body.userId) repairM.owner = req.body.userId;
         if (req.body.vehicle) repairM.vehicle = req.body.vehicle;
-        repairM.save((err) => {
+        repairM.save((err, repair) => {
           if (err) return next(err);
-          res.json({ success: true });
+          res.json({ success: true, data: repair.toObject() });
         });
       } else {
         res.json({

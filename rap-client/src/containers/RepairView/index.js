@@ -92,6 +92,7 @@ class RepairView extends Component {
       this.props.hours,
       this.state.complete,
       this.props.vehicle,
+      this.props.account.role,
     );
   }
 

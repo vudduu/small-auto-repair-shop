@@ -112,6 +112,7 @@ class UpdateRepair extends Component {
         this.state.hour,
         this.state.complete,
         this.vehicle.value,
+        this.props.account.role,
       );
     }
   }
