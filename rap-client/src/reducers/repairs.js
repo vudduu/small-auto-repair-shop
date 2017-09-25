@@ -2,6 +2,7 @@
 
 import {
   CREATE_REPAIR,
+  UPDATE_REPAIR,
   DELETE_REPAIR,
   LOAD_REPAIR,
   LOAD_REPAIRS,
@@ -29,6 +30,16 @@ function handleCreateRepair(state, action) {
     hours: action.hours,
     owner: action.owner,
   }];
+  return { ...state, repairsList };
+}
+
+function handleUpdateRepair(state, action) {
+  const repairsList = state.repairsList.map((repair) => {
+    if (repair._id === action._id) {
+      return Object.assign({}, repair, action);
+    }
+    return repair;
+  });
   return { ...state, repairsList };
 }
 
@@ -93,6 +104,8 @@ export default function (state = defaultRepairsState, action = {}) {
   switch (action.type) {
     case CREATE_REPAIR:
       return handleCreateRepair(state, action);
+    case UPDATE_REPAIR:
+      return handleUpdateRepair(state, action);
     case DELETE_REPAIR:
       return handleDeleteRepair(state, action);
     case LOAD_REPAIR:

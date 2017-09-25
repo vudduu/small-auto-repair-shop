@@ -23,11 +23,19 @@ export function repairCreate(userId, date, hours, vehicle) {
 }
 
 export function repairUpdate(repairId, userId, date, hours, complete, vehicle) {
+  const repair = {
+    _id: repairId,
+  };
+  if (userId) repair.owner = userId;
+  if (date) repair.date = date;
+  if (hours) repair.hours = hours;
+  if (complete) repair.complete = complete;
+  if (vehicle) repair.vehicle = vehicle;
   return dispatch => (
     client.repairUpdate(repairId, userId, date, hours, complete, vehicle)
       .then((res) => {
         if (res.success) {
-          dispatch({ type: UPDATE_REPAIR, ...res });
+          dispatch({ type: UPDATE_REPAIR, ...repair });
         }
         return res;
       })

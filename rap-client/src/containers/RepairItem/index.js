@@ -45,10 +45,21 @@ class RepairItem extends Component {
     console.log(this.props.data._id);
   }
 
+  getCompletedText() {
+    const { data } = this.props;
+    if (data.complete) {
+      if (data.completeRole >= 3) {
+        return 'Completed';
+      }
+      return 'Completed - not confirmed';
+    }
+    return 'Incomplete';
+  }
+
   render() {
     const { data } = this.props;
     const date = data.date ? (new Date(data.date)).toDateString() : '';
-    const label = data.complete ? 'Completed' : 'Incomplete';
+    const label = this.getCompletedText();
     const hourFormat = data.hours <= 12 ? `${data.hours} AM` : `${data.hours - 12} PM`;
     return (
       <div className="peb-repair-item">

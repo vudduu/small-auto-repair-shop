@@ -14,6 +14,8 @@ import { getAllAccountsIdsNames } from '../../actions/account';
 import { repairUpdate, loadRepairById, loadRepairsByDate, addCommentRepair } from '../../actions/repair';
 import ErrorPanel from '../../components/errorPanel';
 
+import { MANAGER } from '../../reducers/account';
+
 const Loader = halogen.RingLoader;
 
 class RepairView extends Component {
@@ -33,6 +35,7 @@ class RepairView extends Component {
     owner: PropTypes.string,
     vehicle: PropTypes.string,
     complete: PropTypes.number,
+    completeRole: PropTypes.number,
     comments: PropTypes.array,
     repairsListLoading: PropTypes.bool.isRequired,
   };
@@ -44,6 +47,7 @@ class RepairView extends Component {
     owner: null,
     vehicle: '',
     complete: 0,
+    completeRole: 0,
     comments: [],
   };
 
@@ -108,6 +112,16 @@ class RepairView extends Component {
     this.comment.value = '';
   }
 
+  completedText() {
+    if (this.state.complete === 1) {
+      if (this.props.completeRole && this.props.completeRole >= 3) {
+        return 'True by manager';
+      }
+      return 'True by user';
+    }
+    return 'False';
+  }
+
   render() {
     if (this.props.repairsListLoading || !this.props.date) {
       return (
@@ -139,8 +153,7 @@ class RepairView extends Component {
 
         <div className="div-group">
           <div className="left">Complete:</div>
-          <div className="right">{this.state.complete === 1 ? 'True' : 'False'}</div>
-
+          <div className="right">{this.completedText()}</div>
         </div>
 
         {this.props.complete === 0 ? (
@@ -156,6 +169,16 @@ class RepairView extends Component {
               onClick={this.saveRepair}
             >
               Update
+            </button>
+          </div>
+        ) : null}
+        {this.props.complete === 1 && this.props.account.role >= MANAGER ? (
+          <div className="row">
+            <button
+              className="peb-input create-button"
+              onClick={this.saveRepair}
+            >
+              CONFIRM
             </button>
           </div>
         ) : null}
@@ -179,7 +202,7 @@ class RepairView extends Component {
                 ));
                 const name = user ? user.name : 'manager';
                 return (
-                  <div>
+                  <div key={comment.date}>
                     <b>{name}:</b> {comment.text}
                     <span className="date-time">{date}</span>
                   </div>
